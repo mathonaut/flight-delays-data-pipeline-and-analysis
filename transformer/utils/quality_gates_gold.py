@@ -117,31 +117,31 @@ def run_quality_gates_gold(dim_air, dim_apt, dim_dat, fat_flt) -> None:
     dim_dat.cache()
     fat_flt.cache()
 
-    _check_unique(dim_air, "airline_iata_code", "dim_air")
-    _check_unique(dim_apt, "airport_iata_code", "dim_apt")
-    _check_unique(dim_dat, "full_date", "dim_dat")
-    _check_unique(fat_flt, "flight_id", "fat_flt")
+    _check_unique(dim_air, "air_iata", "dim_air")
+    _check_unique(dim_apt, "apt_iata", "dim_apt")
+    _check_unique(dim_dat, "full_dat", "dim_dat")
+    _check_unique(fat_flt, "srk_flt", "fat_flt")
 
     _check_no_nulls(
         fat_flt,
-        ["airline_id", "origin_airport_id", "dest_airport_id", "full_date"],
+        ["srk_air", "srk_ori", "srk_dst", "srk_dat"],
         "fat_flt",
     )
 
     _check_fk_integrity(
-        fat_flt, dim_air, "airline_id", "airline_id",
+        fat_flt, dim_air, "srk_air", "srk_air",
         "fat_flt", "dim_air",
     )
     _check_fk_integrity(
-        fat_flt, dim_apt, "origin_airport_id", "airport_id",
+        fat_flt, dim_apt, "srk_ori", "srk_apt",
         "fat_flt", "dim_apt",
     )
     _check_fk_integrity(
-        fat_flt, dim_apt, "dest_airport_id", "airport_id",
+        fat_flt, dim_apt, "srk_dst", "srk_apt",
         "fat_flt", "dim_apt",
     )
     _check_fk_integrity(
-        fat_flt, dim_dat, "full_date", "full_date",
+        fat_flt, dim_dat, "srk_dat", "srk_dat",
         "fat_flt", "dim_dat",
     )
 

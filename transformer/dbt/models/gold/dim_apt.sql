@@ -1,12 +1,12 @@
 -- Model: dim_apt
 -- Descrição: Dimensão de aeroportos derivada da tabela OBT.
 
+
 {{ config(
     materialized = "table",
     schema       = "dbt_gold",
     tags         = ["gold", "dim", "airport"]
 ) }}
-
 
 -- Consolidação dos aeroportos de origem e destino a partir da silver_flights.
 WITH airports_raw AS (
@@ -52,13 +52,13 @@ clean AS (
 
 -- Criação da chave substituta e ordenação da dimensão.
 SELECT
-    ROW_NUMBER() OVER (ORDER BY airport_iata_code)::BIGINT AS airport_id,
-    airport_iata_code,
-    airport_name,
-    state_code,
-    state_name,
-    city_name,
-    latitude,
-    longitude
+    ROW_NUMBER() OVER (ORDER BY airport_iata_code)::BIGINT AS srk_apt,
+    airport_iata_code AS apt_iata,
+    airport_name AS apt_name,
+    state_code AS st_cd,
+    state_name AS st_name,
+    city_name AS cty_name,
+    latitude AS lat_val,
+    longitude AS lon_val
 FROM clean
 ORDER BY airport_iata_code
