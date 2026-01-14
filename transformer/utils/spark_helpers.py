@@ -4,15 +4,14 @@ from typing import Optional, Dict, List
 from pyspark.sql import SparkSession, DataFrame
 from transformer.utils.logger import get_logger
 
+
 log = get_logger("spark_helpers")
 
-# Detecta ambiente com Airflow disponível
 try:
     from airflow.providers.postgres.hooks.postgres import PostgresHook
     AIRFLOW_AVAILABLE = True
 except Exception:
     AIRFLOW_AVAILABLE = False
-
 
 def _resolve_postgres_connection(db_conn_id: str) -> tuple[str, str, str]:
     """
@@ -189,10 +188,7 @@ def get_spark_session(
     additional_configs: Optional[Dict[str, str]] = None,
 ) -> SparkSession:
     """
-    Cria uma SparkSession com configurações otimizadas para:
-        - ETL local;
-        - integração JDBC;
-        - redução de logs desnecessários.
+    Cria uma SparkSession com configurações otimizadas.
 
     Args:
         app_name (str): Nome da aplicação.

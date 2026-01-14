@@ -12,10 +12,10 @@
 WITH raw AS (
 
     SELECT
-        nullif(year, '')::smallint         AS flight_year,
-        nullif(month, '')::smallint        AS flight_month,
-        nullif(day, '')::smallint          AS flight_day,
-        nullif(day_of_week, '')::smallint  AS flight_day_of_week,
+        nullif(year, '')::smallint          AS flight_year,
+        nullif(month, '')::smallint         AS flight_month,
+        nullif(day, '')::smallint           AS flight_day,
+        nullif(day_of_week, '')::smallint   AS flight_day_of_week,
 
         make_date(
             nullif(year, '')::int,
@@ -23,31 +23,31 @@ WITH raw AS (
             nullif(day, '')::int
         ) AS flight_date,
 
-        airline               AS airline_iata_code,
-        nullif(flight_number, '')::int    AS flight_number,
+        airline                             AS airline_iata_code,
+        nullif(flight_number, '')::int      AS flight_number,
         tail_number,
-        origin_airport        AS origin_airport_iata_code,
-        destination_airport   AS dest_airport_iata_code,
+        origin_airport                      AS origin_airport_iata_code,
+        destination_airport                 AS dest_airport_iata_code,
 
-        nullif(distance, '')::double precision        AS distance,
-        nullif(elapsed_time, '')::double precision    AS elapsed_time,
-        nullif(air_time, '')::double precision        AS air_time,
-        nullif(scheduled_time, '')::double precision  AS scheduled_time,
-        nullif(taxi_out, '')::double precision        AS taxi_out,
-        nullif(taxi_in, '')::double precision         AS taxi_in,
-        nullif(departure_delay, '')::double precision AS departure_delay,
-        nullif(arrival_delay, '')::double precision   AS arrival_delay,
+        nullif(distance, '')::double precision          AS distance,
+        nullif(elapsed_time, '')::double precision      AS elapsed_time,
+        nullif(air_time, '')::double precision          AS air_time,
+        nullif(scheduled_time, '')::double precision    AS scheduled_time,
+        nullif(taxi_out, '')::double precision          AS taxi_out,
+        nullif(taxi_in, '')::double precision           AS taxi_in,
+        nullif(departure_delay, '')::double precision   AS departure_delay,
+        nullif(arrival_delay, '')::double precision     AS arrival_delay,
 
         -- Atrasos detalhados (convertendo strings para números)
-        coalesce(nullif(air_system_delay, '')::double precision, 0)    AS air_system_delay,
-        coalesce(nullif(security_delay, '')::double precision, 0)      AS security_delay,
-        coalesce(nullif(airline_delay, '')::double precision, 0)       AS airline_delay,
-        coalesce(nullif(late_aircraft_delay, '')::double precision, 0) AS late_aircraft_delay,
-        coalesce(nullif(weather_delay, '')::double precision, 0)       AS weather_delay,
+        coalesce(nullif(air_system_delay, '')::double precision, 0)     AS air_system_delay,
+        coalesce(nullif(security_delay, '')::double precision, 0)       AS security_delay,
+        coalesce(nullif(airline_delay, '')::double precision, 0)        AS airline_delay,
+        coalesce(nullif(late_aircraft_delay, '')::double precision, 0)  AS late_aircraft_delay,
+        coalesce(nullif(weather_delay, '')::double precision, 0)        AS weather_delay,
 
         -- Normalização cancelado/divertido
-        {{ parse_int('cancelled') }} AS cancelled,
-        {{ parse_int('diverted') }}  AS diverted,
+        {{ parse_int('cancelled') }}    AS cancelled,
+        {{ parse_int('diverted') }}     AS diverted,
 
         scheduled_departure,
         departure_time,
@@ -86,12 +86,12 @@ ts AS (
 
     SELECT
         t.*,
-        {{ build_ts('flight_date', 'sched_dep_hhmm') }} AS scheduled_departure_ts,
-        {{ build_ts('flight_date', 'dep_time_hhmm') }}  AS departure_time_ts,
-        {{ build_ts('flight_date', 'sched_arr_hhmm') }} AS scheduled_arrival_ts,
-        {{ build_ts('flight_date', 'arr_time_hhmm') }}  AS arrival_time_ts,
-        {{ build_ts('flight_date', 'wheels_off_hhmm') }} AS wheels_off_ts,
-        {{ build_ts('flight_date', 'wheels_on_hhmm') }}  AS wheels_on_ts
+        {{ build_ts('flight_date', 'sched_dep_hhmm') }}     AS scheduled_departure_ts,
+        {{ build_ts('flight_date', 'dep_time_hhmm') }}      AS departure_time_ts,
+        {{ build_ts('flight_date', 'sched_arr_hhmm') }}     AS scheduled_arrival_ts,
+        {{ build_ts('flight_date', 'arr_time_hhmm') }}      AS arrival_time_ts,
+        {{ build_ts('flight_date', 'wheels_off_hhmm') }}    AS wheels_off_ts,
+        {{ build_ts('flight_date', 'wheels_on_hhmm') }}     AS wheels_on_ts
     FROM times t
 
 ),
@@ -240,12 +240,12 @@ final AS (
         dest_latitude,
         dest_longitude,
 
-        scheduled_departure_ts AS scheduled_departure,
-        departure_time_fixed   AS departure_time,
-        scheduled_arrival_ts   AS scheduled_arrival,
-        arrival_time_adj       AS arrival_time,
-        wheels_off_ts          AS wheels_off,
-        wheels_on_ts           AS wheels_on,
+        scheduled_departure_ts  AS scheduled_departure,
+        departure_time_fixed    AS departure_time,
+        scheduled_arrival_ts    AS scheduled_arrival,
+        arrival_time_adj        AS arrival_time,
+        wheels_off_ts           AS wheels_off,
+        wheels_on_ts            AS wheels_on,
 
         taxi_out,
         taxi_in,
@@ -260,9 +260,9 @@ final AS (
         security_delay,
         airline_delay,
         late_aircraft_delay,
-        weather_delay
+        weather_delay,
 
-        is_overnight_flight,
+        is_overnight_flight
 
     FROM joined
     WHERE departure_time_fixed IS NOT NULL

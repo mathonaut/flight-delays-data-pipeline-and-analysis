@@ -1,6 +1,6 @@
 # Flight Delays Data Pipeline and Analysis
 
-Este projeto implementa um pipeline completo de engenharia de dados desenvolvido para a disciplina de **Sistemas de Bancos de Dados 2**, demonstrando a construção de uma solução de dados de ponta a ponta, desde a ingestão de arquivos brutos até a criação de um modelo analítico em formato dimensional. Utilizando os [dados de atrasos de voos dos EUA (2015)](https://www.kaggle.com/datasets/usdot/flight-delays), provenientes do Kaggle, o projeto adota a **Medallion Architecture (Bronze, Silver, Gold)** para estruturar, transformar e validar dados de forma incremental e reproduzível.
+Este projeto implementa um pipeline completo de engenharia de dados desenvolvido para a disciplina de **Sistemas de Bancos de Dados 2**, demonstrando a construção de uma solução de dados de ponta a ponta, desde a ingestão de arquivos brutos até a criação de um modelo analítico em formato dimensional. Utilizando os [dados de atrasos de voos dos EUA (2015)](https://www.kaggle.com/datasets/usdot/flight-delays), provenientes do Kaggle, o projeto adota a **Medallion Architecture (Raw, Silver, Gold)** para estruturar, transformar e validar dados de forma incremental e reproduzível.
 
 A solução simula um ambiente realista de produção, incluindo orquestração com Apache Airflow, processamento distribuído com PySpark, execução parametrizada via Papermill, transformações com o dbt, modelagem analítica e um Data Warehouse em PostgreSQL.
 
@@ -10,10 +10,10 @@ A solução simula um ambiente realista de produção, incluindo orquestração 
 
 - **Orquestração:** Apache Airflow;
 - **Conteinerização:** Docker & Docker Compose;
-- **Armazenamento:** Csv e Parquet;
+- **Armazenamento:** CSV e Parquet;
 - **Banco de Dados (Metadados do Airflow e Data Warehouse):** PostgreSQL;
 - **Análise e Processamento de Dados:** dbt, Jupyter Notebook, Matplotlib, Pandas, Papermill, PySpark, Seaborn e Scikit-learn;
-- **Visualização:** Microsoft PowerBI;
+- **Visualização:** Matplotlib, Microsoft PowerBI e Seaborn;
 - **Linguagens:** Python, SQL & Bash.
 
 ---
@@ -22,8 +22,8 @@ A solução simula um ambiente realista de produção, incluindo orquestração 
 
 A pipeline segue a arquitetura Medallion:
 
-- **Stage:** Área inicial contendo os arquivos csv brutos, utilizados diretamente como input da camada Bronze (evita redownloads dos arquivos pesados);
-- **Bronze:** Conversão para Parquet e persistência final dos arquivos brutos;
+- **Stage:** Área inicial contendo os arquivos csv brutos, utilizados diretamente como input da camada Raw (evita redownloads dos arquivos pesados);
+- **Raw:** Conversão para Parquet e persistência final dos arquivos brutos;
 - **Silver:** Limpeza, normalização, tratamento de tipos, padronização de colunas e validações de qualidade (quality gates);
 - **Gold:** Modelagem analítica em esquema estrela, com criação de dimensões e fatos, otimizada para uso em dashboards e consultas de alto desempenho.
 
@@ -48,7 +48,6 @@ A pipeline segue a arquitetura Medallion:
 │   │   ├── gold_consultas.sql
 │   │   ├── gold_data_dictionary.md
 │   │   ├── gold_ddl.sql
-│   │   ├── gold_definicao_dashboard.pdf
 │   │   ├── gold_mer_der_dld.pdf
 │   │   └── mnemonico.md
 │   │
@@ -56,8 +55,6 @@ A pipeline segue a arquitetura Medallion:
 │   │   ├── raw_analysis.ipynb
 │   │   ├── raw_data_dictionary.md
 │   │   ├── raw_ddl.sql
-│   │   ├── raw_mer_der_dld.pdf
-│   │   ├── raw_metadados.md
 │   │   └── stage
 │   │       ├── airlines.csv
 │   │       ├── airports.csv
@@ -74,7 +71,6 @@ A pipeline segue a arquitetura Medallion:
 │   │
 │   └── silver
 │       ├── silver_analysis.ipynb
-│       ├── silver_consultas.sql
 │       ├── silver_data_dictionary.md
 │       ├── silver_ddl.sql
 │       └── silver_mer_der_dld.pdf
@@ -159,11 +155,11 @@ O PostgreSQL inicia automaticamente com:
 
 Os scripts SQL de criação de tabelas estão localizados na `data-layer`.
 
-As cargas das tabelas da `silver_*`, `gold_*` e do `dbt_*` são realizadas diretamente pelos notebooks ETL e com `BashOperator` do Airflow.
+As cargas das tabelas da `silver_*`, `gold_*` e do `dbt_*` são realizadas diretamente pelos notebooks ETL.
 
 ### Qualidade de Dados
 
-O projeto implementa testes automáticos para as camadas silver e gold. Os validadores estão em:
+O projeto implementa testes automáticos para as camadas. Os validadores estão em:
 
 ```bash
 transformer/utils/quality_gates_*.py

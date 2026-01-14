@@ -33,10 +33,10 @@ WITH base AS (
 -- Construção dos atributos da dimensão de datas
 final AS (
     SELECT
-        flight_date                                                     AS full_dat,
-        EXTRACT(YEAR    FROM flight_date)::SMALLINT                     AS yr,
-        EXTRACT(MONTH   FROM flight_date)::SMALLINT                     AS mm,
-        EXTRACT(DAY     FROM flight_date)::SMALLINT                     AS dd,
+        flight_date                                                     AS ful_dat,
+        EXTRACT(YEAR    FROM flight_date)::SMALLINT                     AS yer,
+        EXTRACT(MONTH   FROM flight_date)::SMALLINT                     AS mth,
+        EXTRACT(DAY     FROM flight_date)::SMALLINT                     AS day,
         (((EXTRACT(DOW  FROM flight_date)::INT + 6) % 7) + 1)::SMALLINT AS dow,
         EXTRACT(QUARTER FROM flight_date)::SMALLINT                     AS qtr,
         (
@@ -45,11 +45,13 @@ final AS (
                     '{{ d }}'{{ "," if not loop.last }}
                 {% endfor %}
             )
-        ) AS is_hol
+        ) AS hol_flg
     FROM base
 )
 
 -- Seleção ordenada para formar a dimensão
-SELECT *
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY ful_dat)::BIGINT AS srk_dat,
+    ful_dat, yer, mth, day, dow, qtr, hol_flg
 FROM final
-ORDER BY full_dat
+ORDER BY ful_dat

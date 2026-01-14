@@ -263,13 +263,13 @@ services:
         --allow-root
         --ServerApp.token=''
         --ServerApp.password=''
-        --notebook-dir=/opt/airflow/transformer
+        --notebook-dir=/opt/airflow/
     ports:
       - "8888:8888"
     volumes:
       - ./data-layer:/opt/airflow/data-layer
       - ./transformer:/opt/airflow/transformer
-    working_dir: /opt/airflow/transformer
+    working_dir: /opt/airflow/
     restart: always
     networks:
       - flights_net

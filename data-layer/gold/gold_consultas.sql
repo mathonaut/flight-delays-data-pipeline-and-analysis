@@ -89,15 +89,15 @@ ORDER BY total_atraso DESC;
 
 -- Consulta 7: Top 10 Piores Rotas (Barra Horizontal)
 SELECT 
-    ori.apt_iata AS origem,
-    dst.apt_iata AS destino,
+    ori.apt_iat AS origem,
+    dst.apt_iat AS destino,
     COUNT(*) AS total_voos,
     AVG(f.arr_dly) AS media_atraso,
     SUM(f.arr_dly) AS impacto_total
 FROM gold.fat_flt AS f
 JOIN gold.dim_apt AS ori ON f.srk_ori = ori.srk_apt
 JOIN gold.dim_apt AS dst ON f.srk_dst = dst.srk_apt
-GROUP BY ori.apt_iata, dst.apt_iata
+GROUP BY ori.apt_iat, dst.apt_iat
 HAVING COUNT(*) >= 50
 ORDER BY impacto_total DESC
 LIMIT 10;
@@ -121,15 +121,15 @@ ORDER BY impacto_total DESC;
 -- Consulta 9: Atraso Médio por Duração do Voo (Colunas Verticais - 3 categorias)
 SELECT 
     CASE 
-        WHEN f.elp_time <= 90 THEN 'Curta'
-        WHEN f.elp_time <= 240 THEN 'Média'
+        WHEN f.elp_tme <= 90 THEN 'Curta'
+        WHEN f.elp_tme <= 240 THEN 'Média'
         ELSE 'Longa'
     END AS categoria,
     COUNT(*) AS total_voos,
     AVG(f.arr_dly) AS media_atraso,
     PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY f.arr_dly) AS p95
 FROM gold.fat_flt AS f
-WHERE f.elp_time IS NOT NULL
+WHERE f.elp_tme IS NOT NULL
 GROUP BY categoria
 ORDER BY media_atraso DESC;
 

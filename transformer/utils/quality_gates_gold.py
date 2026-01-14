@@ -117,9 +117,9 @@ def run_quality_gates_gold(dim_air, dim_apt, dim_dat, fat_flt) -> None:
     dim_dat.cache()
     fat_flt.cache()
 
-    _check_unique(dim_air, "air_iata", "dim_air")
-    _check_unique(dim_apt, "apt_iata", "dim_apt")
-    _check_unique(dim_dat, "full_dat", "dim_dat")
+    _check_unique(dim_air, "air_iat", "dim_air")
+    _check_unique(dim_apt, "apt_iat", "dim_apt")
+    _check_unique(dim_dat, "ful_dat", "dim_dat")
     _check_unique(fat_flt, "srk_flt", "fat_flt")
 
     _check_no_nulls(

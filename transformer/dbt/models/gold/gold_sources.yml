@@ -7,53 +7,52 @@ models:
     tests:
       - not_empty
       - pk_not_null:
-          pk_columns: ["airline_id"]
+          pk_columns: ["srk_air"]
       - pk_unique:
-          pk_columns: ["airline_id"]
+          pk_columns: ["srk_air"]
       - unique_column:
-          column_name: airline_iata_code
+          column_name: air_iat
       - not_null_columns:
-          columns: ["airline_iata_code", "airline_name"]
+          columns: ["air_iat", "air_nam"]
 
     columns:
-      - name: airline_id
+      - name: srk_air
         description: "Chave substituta da companhia aérea."
-      - name: airline_iata_code
+      - name: air_iat
         description: "Código IATA da companhia aérea."
-      - name: airline_name
+      - name: air_nam
         description: "Nome da companhia aérea."
 
   # dim_apt
   - name: dim_apt
-    description: "Dimensão de aeroportos dos EUA com base nos dados de 2015 do USDOT (via Kaggle)."
+    description: "Dimensão de aeroportos dos EUA com base nos dados de 2015."
     tests:
       - not_empty
       - pk_not_null:
-          pk_columns: ["airport_id"]
+          pk_columns: ["srk_apt"]
       - pk_unique:
-          pk_columns: ["airport_id"]
+          pk_columns: ["srk_apt"]
       - unique_column:
-          column_name: airport_iata_code
+          column_name: apt_iat
       - not_null_columns:
-          columns:
-            ["airport_iata_code", "airport_name", "city_name", "state_code"]
+          columns: ["apt_iat", "apt_nam", "cty_nam", "ste_cod"]
 
     columns:
-      - name: airport_id
+      - name: srk_apt
         description: "Chave substituta do aeroporto."
-      - name: airport_iata_code
+      - name: apt_iat
         description: "Código IATA do aeroporto."
-      - name: airport_name
+      - name: apt_nam
         description: "Nome do aeroporto."
-      - name: city_name
+      - name: cty_nam
         description: "Cidade onde o aeroporto está localizado."
-      - name: state_code
+      - name: ste_cod
         description: "Código do estado (sigla)."
-      - name: state_name
-        description: "Nome completo do estado (não disponível na raw; permanece nulo)."
-      - name: latitude
+      - name: ste_nam
+        description: "Nome do estado (pode ser placeholder dependendo da origem do dado)."
+      - name: lat_val
         description: "Latitude do aeroporto."
-      - name: longitude
+      - name: lon_val
         description: "Longitude do aeroporto."
 
   # dim_dat
@@ -62,26 +61,30 @@ models:
     tests:
       - not_empty
       - pk_not_null:
-          pk_columns: ["full_date"]
+          pk_columns: ["srk_dat"]
       - pk_unique:
-          pk_columns: ["full_date"]
+          pk_columns: ["srk_dat"]
+      - unique_column:
+          column_name: ful_dat
       - not_null_columns:
-          columns: ["full_date", "year", "month", "day", "day_of_week"]
+          columns: ["ful_dat", "yer", "mth", "day", "dow"]
 
     columns:
-      - name: full_date
-        description: "Data completa utilizada como chave da dimensão."
-      - name: year
+      - name: srk_dat
+        description: "Chave substituta da data."
+      - name: ful_dat
+        description: "Data completa utilizada como chave natural da dimensão."
+      - name: yer
         description: "Ano da data."
-      - name: month
+      - name: mth
         description: "Mês correspondente."
       - name: day
         description: "Dia do mês."
-      - name: day_of_week
+      - name: dow
         description: "Dia da semana (1 = segunda, 7 = domingo)."
-      - name: quarter
+      - name: qtr
         description: "Trimestre do ano."
-      - name: is_holiday
+      - name: hol_flg
         description: "Indica feriados nacionais dos EUA baseados no calendário oficial de 2015."
 
   # fat_flt
@@ -90,86 +93,77 @@ models:
     tests:
       - not_empty
       - pk_not_null:
-          pk_columns: ["flight_id"]
+          pk_columns: ["srk_flt"]
       - pk_unique:
-          pk_columns: ["flight_id"]
+          pk_columns: ["srk_flt"]
 
       - not_null_columns:
-          columns:
-            ["full_date", "airline_id", "origin_airport_id", "dest_airport_id"]
+          columns: ["srk_dat", "srk_air", "srk_ori", "srk_dst"]
 
       - fk_exists:
-          column: airline_id
+          column: srk_air
           fk_model: ref('dim_air')
-          fk_column: airline_id
+          fk_column: srk_air
 
       - fk_exists:
-          column: origin_airport_id
+          column: srk_ori
           fk_model: ref('dim_apt')
-          fk_column: airport_id
+          fk_column: srk_apt
 
       - fk_exists:
-          column: dest_airport_id
+          column: srk_dst
           fk_model: ref('dim_apt')
-          fk_column: airport_id
+          fk_column: srk_apt
 
       - fk_exists:
-          column: full_date
+          column: srk_dat
           fk_model: ref('dim_dat')
-          fk_column: full_date
+          fk_column: srk_dat
 
     columns:
-      - name: flight_id
-        description: "Chave substituta do voo (gerada na Silver)."
-      - name: full_date
-        description: "Chave da data do voo."
-      - name: airline_id
-        description: "Chave da companhia aérea."
-      - name: origin_airport_id
-        description: "Chave do aeroporto de origem."
-      - name: dest_airport_id
-        description: "Chave do aeroporto de destino."
+      - name: srk_flt
+        description: "Chave substituta do registro de voo na fato."
+      - name: srk_dat
+        description: "FK para dim_dat."
+      - name: srk_air
+        description: "FK para dim_air."
+      - name: srk_ori
+        description: "FK para dim_apt (origem)."
+      - name: srk_dst
+        description: "FK para dim_apt (destino)."
 
-      - name: scheduled_departure
-        description: "Horário programado de partida (bruto)."
-      - name: departure_time
-        description: "Horário real de partida (corrigido)."
-      - name: scheduled_arrival
+      - name: sch_dep
+        description: "Horário programado de partida."
+      - name: dep_tme
+        description: "Horário real de partida."
+      - name: sch_arr
         description: "Horário programado de chegada."
-      - name: arrival_time
-        description: "Horário real de chegada (corrigido)."
-      - name: wheels_off
-        description: "Momento em que a aeronave decola."
-      - name: wheels_on
-        description: "Momento em que a aeronave pousa."
+      - name: arr_tme
+        description: "Horário real de chegada."
 
-      - name: distance
-        description: "Distância do voo em milhas."
-      - name: air_time
+      - name: dis_val
+        description: "Distância do voo."
+      - name: air_tme
         description: "Tempo em ar (minutos)."
-      - name: elapsed_time
+      - name: elp_tme
         description: "Tempo total do voo (minutos)."
-      - name: scheduled_time
+      - name: sch_tme
         description: "Tempo programado total (minutos)."
-      - name: taxi_out
-        description: "Tempo de taxiamento na origem."
-      - name: taxi_in
-        description: "Tempo de taxiamento no destino."
 
-      - name: departure_delay
+      - name: dep_dly
         description: "Atraso na partida."
-      - name: arrival_delay
+      - name: arr_dly
         description: "Atraso na chegada."
-      - name: is_overnight_flight
-        description: "Indica se atravessou a meia-noite."
+      - name: sys_dly
+        description: "Atraso por sistema."
+      - name: sec_dly
+        description: "Atraso por segurança."
+      - name: air_dly
+        description: "Atraso da companhia."
+      - name: acf_dly
+        description: "Atraso por aeronave tardia."
+      - name: wea_dly
+        description: "Atraso por clima."
 
-      - name: air_system_delay
-        description: "Atraso por sistema de tráfego aéreo."
-      - name: security_delay
-        description: "Atraso por questões de segurança."
-      - name: airline_delay
-        description: "Atraso atribuído à companhia aérea."
-      - name: late_aircraft_delay
-        description: "Atraso causado por chegada tardia da aeronave."
-      - name: weather_delay
-        description: "Atraso devido a condições climáticas adversas."
+      - name: ovn_flg
+        description: "Indica se atravessou a meia-noite."

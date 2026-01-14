@@ -18,7 +18,7 @@ WITH airlines AS (
 
 SELECT
     ROW_NUMBER() OVER (ORDER BY airline_iata_code)::BIGINT AS srk_air,
-    airline_iata_code as air_iata,
-    airline_name AS air_name
+    airline_iata_code as air_iat,
+    airline_name AS air_nam
 FROM airlines
 ORDER BY airline_iata_code

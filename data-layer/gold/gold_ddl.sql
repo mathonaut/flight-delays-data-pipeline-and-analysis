@@ -20,18 +20,18 @@ SET search_path TO gold;
 
 CREATE TABLE IF NOT EXISTS dim_air (
     srk_air SERIAL NOT NULL,
-    air_iata VARCHAR(3) UNIQUE NOT NULL,
-    air_name VARCHAR(100) NOT NULL
+    air_iat VARCHAR(3) UNIQUE NOT NULL,
+    air_nam VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS dim_apt (
     srk_apt SERIAL NOT NULL,
-    apt_iata VARCHAR(3) UNIQUE NOT NULL,
-    apt_name VARCHAR(100) NOT NULL,
+    apt_iat VARCHAR(3) UNIQUE NOT NULL,
+    apt_nam VARCHAR(100) NOT NULL,
     
-    st_cd VARCHAR(3) NOT NULL,
-    st_name VARCHAR(100) NOT NULL,
-    cty_name VARCHAR(100) NOT NULL,
+    ste_cod VARCHAR(3) NOT NULL,
+    ste_nam VARCHAR(100) NOT NULL,
+    cty_nam VARCHAR(100) NOT NULL,
 
     lat_val DOUBLE PRECISION,
     lon_val DOUBLE PRECISION
@@ -40,14 +40,14 @@ CREATE TABLE IF NOT EXISTS dim_apt (
 CREATE TABLE IF NOT EXISTS dim_dat (
     srk_dat SERIAL NOT NULL,
 
-    full_dat DATE NOT NULL,
-    yr SMALLINT NOT NULL,
-    mm SMALLINT NOT NULL,
-    dd SMALLINT NOT NULL,
+    ful_dat DATE NOT NULL,
+    yer SMALLINT NOT NULL,
+    mth SMALLINT NOT NULL,
+    day SMALLINT NOT NULL,
     dow SMALLINT NOT NULL,
-    
     qtr SMALLINT,
-    is_hol BOOLEAN DEFAULT FALSE
+
+    hol_flg BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS fat_flt (
@@ -58,25 +58,25 @@ CREATE TABLE IF NOT EXISTS fat_flt (
     srk_dst SERIAL NOT NULL,
 
     sch_dep TIMESTAMP,
-    dep_time TIMESTAMP,
+    dep_tme TIMESTAMP,
     sch_arr TIMESTAMP,
-    arr_time TIMESTAMP,
+    arr_tme TIMESTAMP,
 
-    dist_val DOUBLE PRECISION,
+    dis_val DOUBLE PRECISION,
 
-    air_time DOUBLE PRECISION,
-    elp_time DOUBLE PRECISION,
-    sch_time DOUBLE PRECISION,
+    air_tme DOUBLE PRECISION,
+    elp_tme DOUBLE PRECISION,
+    sch_tme DOUBLE PRECISION,
 
     dep_dly DOUBLE PRECISION DEFAULT 0,
     arr_dly DOUBLE PRECISION DEFAULT 0,
     sys_dly DOUBLE PRECISION DEFAULT 0,
     sec_dly DOUBLE PRECISION DEFAULT 0,
     air_dly DOUBLE PRECISION DEFAULT 0,
-    acft_dly DOUBLE PRECISION DEFAULT 0,
-    wx_dly DOUBLE PRECISION DEFAULT 0,
+    acf_dly DOUBLE PRECISION DEFAULT 0,
+    wea_dly DOUBLE PRECISION DEFAULT 0,
 
-    is_ovn_flt BOOLEAN NOT NULL DEFAULT FALSE
+    ovn_flg BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 ALTER TABLE dim_apt ADD CONSTRAINT pk_dim_apt PRIMARY KEY (srk_apt);
@@ -107,9 +107,9 @@ CREATE INDEX IF NOT EXISTS idx_flt_dst ON fat_flt(srk_dst);
 
 CREATE INDEX IF NOT EXISTS idx_flt_arr_dly ON fat_flt(arr_dly);
 CREATE INDEX IF NOT EXISTS idx_flt_sch_dep ON fat_flt(sch_dep);
-CREATE INDEX IF NOT EXISTS idx_flt_sch_time ON fat_flt(sch_time);
+CREATE INDEX IF NOT EXISTS idx_flt_sch_tme ON fat_flt(sch_tme);
 
-CREATE INDEX IF NOT EXISTS idx_dim_air_air_name ON dim_air(air_name);
-CREATE INDEX IF NOT EXISTS idx_dim_apt_apt_name ON dim_apt(apt_name);
+CREATE INDEX IF NOT EXISTS idx_dim_air_air_nam ON dim_air(air_nam);
+CREATE INDEX IF NOT EXISTS idx_dim_apt_apt_nam ON dim_apt(apt_nam);
 
 COMMENT ON SCHEMA gold IS 'Modelagem star schema, otimizada para bi e ia.';
